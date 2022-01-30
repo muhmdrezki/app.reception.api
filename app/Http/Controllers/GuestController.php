@@ -13,9 +13,16 @@ class GuestController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $guests = Guest::paginate(5);
+        $search = $request->get('search') ? $request->get('search') :  null;
+        $searchBy = $request->get('searchBy') ? $request->get('searchBy') : 'nama';
+
+        if ($search !== null) {
+            $guests = Guest::where($searchBy, 'LIKE', "%{$search}%")->paginate(5);
+        } else {
+            $guests = Guest::paginate(5);
+        }
 
         return response()->json([
             'status' => true,
@@ -29,9 +36,16 @@ class GuestController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response 
      */
-    public function getCheckedIn()
+    public function getCheckedIn(Request $request)
     {
-        $guests = Guest::where('checkin', 1)->paginate(5);
+        $search = $request->get('search') ? $request->get('search') :  null;
+        $searchBy = $request->get('searchBy') ? $request->get('searchBy') : 'nama';
+
+        if ($search !== null) {
+            $guests = Guest::where($searchBy, 'LIKE', "%{$search}%")->where('checkin', 1)->paginate(5);
+        } else {
+            $guests = Guest::where('checkin', 1)->paginate(5);
+        }
 
         return response()->json([
             'status' => true,
@@ -112,15 +126,15 @@ class GuestController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function checkin(Request $request) {
-        DB::BeginTransaction();
         $guests = Guest::where('nama', $request->nama)->first();
 
         if ($guests) {
+            if ($guests->checkin == 1) {
+                return response(['status' => false, 'message' => 'Tamu atas nama <b>'. $guests->nama .'</b> sudah check-in'], 400);    
+            }
             $guests->update($request->all());
-            DB::commit();
             return response(['status' => true, 'message' => 'Check-in tamu berhasil'], 200);
         } else {
-            DB::commit();
             return response(['status' => false, 'message' => 'Data Tamu tidak ditemukan'], 400);
         }
     }
