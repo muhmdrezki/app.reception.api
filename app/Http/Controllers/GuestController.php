@@ -18,8 +18,16 @@ class GuestController extends Controller
         $search = $request->get('search') ? $request->get('search') :  null;
         $searchBy = $request->get('searchBy') ? $request->get('searchBy') : 'nama';
 
-        if ($search !== null) {
-            $guests = Guest::where($searchBy, 'LIKE', "%{$search}%")->paginate(5);
+        if ($search !== null || $request->get('isCheckin') !== null) {
+            $guests = Guest::where($searchBy, 'LIKE', "%{$search}%");
+            
+            if($request->get('isCheckin') === "true") {
+                $guests = $guests->where('checkin', 1);
+            } else if($request->get('isCheckin') === "false"){
+            
+                $guests = $guests->where('checkin', 0);
+            }
+            $guests = $guests->paginate(5);
         } else {
             $guests = Guest::paginate(5);
         }
