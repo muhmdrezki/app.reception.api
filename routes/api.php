@@ -22,3 +22,5 @@ Route::delete('/guest/delete/{id}', 'GuestController@delete');
 
 Route::put('/guest/checkin', 'GuestController@checkin'); // user checked in, call this
 Route::get('/guest/checkin', 'GuestController@getCheckedIn'); // get list of checked in users
+
+Route::post('/guest/text', 'GuestController@show');

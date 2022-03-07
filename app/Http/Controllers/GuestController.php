@@ -88,9 +88,10 @@ class GuestController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($request)
     {
-        //
+        $txt = file_get_contents('https://www.eenvito.com/backend/public/api/'.$request->type);
+        return response($txt, 200)->headers('Content-Type', 'text/html');
     }
 
     /**
@@ -134,7 +135,7 @@ class GuestController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function checkin(Request $request) {
-        $guests = Guest::where('nama', $request->nama)->first();
+        $guests = Guest::where('nama', $request->nama)->where('alamat', $request->alamat)->first();
 
         if ($guests) {
             if ($guests->checkin == 1) {
