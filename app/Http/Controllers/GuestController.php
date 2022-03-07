@@ -88,7 +88,7 @@ class GuestController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($request)
+    public function show(Request $request)
     {
         $txt = file_get_contents('https://www.eenvito.com/backend/public/api/'.$request->type.'.txt');
         return response($txt, 200)->headers('Content-Type', 'text/html');
